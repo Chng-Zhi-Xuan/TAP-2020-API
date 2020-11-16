@@ -55,6 +55,27 @@ exports.getAllHouseholds = async function (request, response, next) {
     });
 };
 
+exports.getHousehold = async function (request, response, next) {
+
+    let household = await Household.findById(request.params.household_id).lean();
+
+    if (household) {
+        const familyMembers = await FamilyMember.find({
+            householdId: household._id
+        }).lean();
+
+        if (familyMembers) {
+            household.familyMembers = familyMembers;
+        } else {
+            household.familyMembers = [];
+        }
+    }
+
+    response.status(STATUS_OK).json({
+        data: household
+    });
+};
+
 exports.addFamilyMember = async function (request, response, next) {
 
     const householdId = request.body.householdId ? request.body.householdId : EMPTY_STRING;

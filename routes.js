@@ -12,6 +12,9 @@ router.route('/household')
         .get(asyncHandler(grantController.getAllHouseholds))
         .post(asyncHandler(grantController.addHousehold));
 
+router.route('/household/:household_id')
+        .get(asyncHandler(grantController.getHousehold));
+
 router.route('/familyMember')
         .get(asyncHandler(grantController.getAllFamilyMembers))
         .post(asyncHandler(grantController.addFamilyMember));
