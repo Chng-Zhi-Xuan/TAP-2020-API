@@ -34,11 +34,22 @@ exports.addHousehold = async function (request, response, next) {
     });
 };
 
-
 exports.getAllHouseholds = async function (request, response, next) {
 
-    // TODO: Get family member data in household
-    const allHousehold = await Household.find();
+    let allHousehold = await Household.find().lean();
+
+    for (let household of allHousehold) {
+        const familyMembers = await FamilyMember.find({
+            householdId: household._id
+        }).lean();
+
+        if (familyMembers) {
+            household.familyMembers = familyMembers;
+        } else {
+            household.familyMembers = [];
+        }
+    }
+
     response.status(STATUS_OK).json({
         data: allHousehold
     });
@@ -47,7 +58,7 @@ exports.getAllHouseholds = async function (request, response, next) {
 exports.addFamilyMember = async function (request, response, next) {
 
     const householdId = request.body.householdId ? request.body.householdId : EMPTY_STRING;
-    const household = await Household.findById(householdId);
+    let household = await Household.findById(householdId);
 
     if (!household) {
         response.status(STATUS_NOT_ACCEPTABLE).send('Household id must be existing');
@@ -91,7 +102,6 @@ exports.addFamilyMember = async function (request, response, next) {
     } else {
 
         await familyMember.save();
-        household.householdFamily.push(familyMember._id);
         await household.save();
 
         // Store family member data back to response
@@ -106,7 +116,7 @@ exports.addFamilyMember = async function (request, response, next) {
 };
 
 exports.getAllFamilyMembers = async function (request, response, next) {
-    const allFamilyMembers = await FamilyMember.find();
+    const allFamilyMembers = await FamilyMember.find().lean();
     response.status(STATUS_OK).json({
         data: allFamilyMembers       
     });

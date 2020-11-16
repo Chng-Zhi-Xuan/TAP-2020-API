@@ -5,10 +5,6 @@ const householdSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    householdFamily: {
-        type: Array,
-        required: true
-    },
     householdIncome: {
         type: mongoose.SchemaTypes.Decimal128,
         required: true
