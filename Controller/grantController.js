@@ -145,28 +145,35 @@ exports.getAllFamilyMembers = async function (request, response, next) {
     });
 };
 
-exports.getYoloGstGrantHouseholds = async function (request, response, next) {
+exports.getElderBonusRecipients = async function (request, response, next) {
+    
+    const householdArray = [];
+    const fiftyYearOldBirthdate = new Date();
+    fiftyYearOldBirthdate.setYear(fiftyYearOldBirthdate.getFullYear() - 50);
 
-    const yoloGstHouseholds = await Household.find({householdIncome : { $lt : YOLO_GST_MAX_HOUSEHOLD_INCOME}}).lean();
+    const elderlyGroupByHousehold = await FamilyMember.aggregate([
+        {$match: {dateOfBirth : {$lte : fiftyYearOldBirthdate}}},
+        {$group: {
+            _id : "$householdId",
+            elderlyArray: {$push: "$$ROOT"}
+        }}
+    ]);
 
-    for (const household of yoloGstHouseholds) {
-        const familyMembers = await FamilyMember.find({
-            householdId: household._id
-        }).lean();
+    for (const elderly of elderlyGroupByHousehold) {
 
-        if (familyMembers) {
-            household.familyMembers = familyMembers;
-        } else {
-            household.familyMembers = [];
+        const household = await Household.findById(elderly._id).lean();
+        if (household) {
+            household.familyMembers = elderly.elderlyArray;
+            householdArray.push(household);
         }
     }
 
     response.status(STATUS_OK).json({
-        data: yoloGstHouseholds
+        data: householdArray
     });
 }
 
-exports.getBabySunshineGrantHouseholds = async function (request, response, next) {
+exports.getBabySunshineGrantRecipients = async function (request, response, next) {
     
     const householdArray = [];
     const fiveYearOldBirthdate = new Date();
@@ -191,5 +198,26 @@ exports.getBabySunshineGrantHouseholds = async function (request, response, next
 
     response.status(STATUS_OK).json({
         data: householdArray
+    });
+}
+
+exports.getYoloGstGrantRecipients = async function (request, response, next) {
+
+    const yoloGstHouseholds = await Household.find({householdIncome : { $lt : YOLO_GST_MAX_HOUSEHOLD_INCOME}}).lean();
+
+    for (const household of yoloGstHouseholds) {
+        const familyMembers = await FamilyMember.find({
+            householdId: household._id
+        }).lean();
+
+        if (familyMembers) {
+            household.familyMembers = familyMembers;
+        } else {
+            household.familyMembers = [];
+        }
+    }
+
+    response.status(STATUS_OK).json({
+        data: yoloGstHouseholds
     });
 }
