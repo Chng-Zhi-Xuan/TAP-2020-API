@@ -19,13 +19,16 @@ router.route('/familyMember')
         .get(asyncHandler(grantController.getAllFamilyMembers))
         .post(asyncHandler(grantController.addFamilyMember));
 
-router.route('/yoloGstGrant')
-        .get(asyncHandler(grantController.getYoloGstGrantRecipients))
+router.route('/studentEncouragementBonus')
+        .get(asyncHandler(grantController.getStudentEncouragementBonusRecipients))
+
+router.route('/elderBonus')
+        .get(asyncHandler(grantController.getElderBonusRecipients))
 
 router.route('/babySunshineGrant')
         .get(asyncHandler(grantController.getBabySunshineGrantRecipients))
 
-router.route('/elderBonus')
-        .get(asyncHandler(grantController.getElderBonusRecipients))
+router.route('/yoloGstGrant')
+        .get(asyncHandler(grantController.getYoloGstGrantRecipients))
 
 module.exports = router;

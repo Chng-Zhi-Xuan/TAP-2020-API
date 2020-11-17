@@ -3,7 +3,8 @@ const FamilyMember = require('../Models/familyMemberModel');
 
 const EMPTY_STRING = '';
 
-const YOLO_GST_MAX_HOUSEHOLD_INCOME = 100000
+const YOLO_GST_MAX_HOUSEHOLD_INCOME = 100000;
+const STUDENT_ENCOURAGEMENT_MAX_HOUSEHOLD_INCOME = 150000;
 
 const STATUS_OK = 200;
 const STATUS_CREATED = 201;
@@ -145,6 +146,41 @@ exports.getAllFamilyMembers = async function (request, response, next) {
     });
 };
 
+exports.getStudentEncouragementBonusRecipients = async function (request, response, next) {
+    
+    const householdArray = [];
+    const sixteenYearOldBirthdate = new Date();
+    sixteenYearOldBirthdate.setYear(sixteenYearOldBirthdate.getFullYear() - 16);
+
+    const studentsGroupByHousehold = await FamilyMember.aggregate([
+        {$match: {
+            dateOfBirth : {$gte : sixteenYearOldBirthdate},
+            occupationType : OCCUPATION_TYPES[1]
+        }},
+        {$group: {
+            _id : "$householdId",
+            studentsArray: {$push: "$$ROOT"}
+        }}
+    ]);
+
+    for (const students of studentsGroupByHousehold) {
+
+        const household = await Household.findOne(
+            {   _id: students._id,
+                householdIncome : { $lt : STUDENT_ENCOURAGEMENT_MAX_HOUSEHOLD_INCOME}
+            }).lean();
+
+        if (household) {
+            household.familyMembers = students.studentsArray;
+            householdArray.push(household);
+        }
+    }
+
+    response.status(STATUS_OK).json({
+        data: householdArray
+    });
+}
+
 exports.getElderBonusRecipients = async function (request, response, next) {
     
     const householdArray = [];
@@ -180,7 +216,8 @@ exports.getBabySunshineGrantRecipients = async function (request, response, next
     fiveYearOldBirthdate.setYear(fiveYearOldBirthdate.getFullYear() - 5);
 
     const childrenGroupByHousehold = await FamilyMember.aggregate([
-        {$match: {dateOfBirth : {$gte : fiveYearOldBirthdate}}},
+        {$match: {
+            dateOfBirth : {$gte : fiveYearOldBirthdate}}},
         {$group: {
             _id : "$householdId",
             childrenArray: {$push: "$$ROOT"}
