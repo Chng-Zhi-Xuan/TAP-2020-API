@@ -3,6 +3,8 @@ const FamilyMember = require('../Models/familyMemberModel');
 
 const EMPTY_STRING = '';
 
+const YOLO_GST_MAX_HOUSEHOLD_INCOME = 100000
+
 const STATUS_OK = 200;
 const STATUS_CREATED = 201;
 const STATUS_NOT_ACCEPTABLE = 406;
@@ -142,3 +144,24 @@ exports.getAllFamilyMembers = async function (request, response, next) {
         data: allFamilyMembers       
     });
 };
+
+exports.getYoloGstGrantHouseholds = async function (request, response, next) {
+
+    let yoloGstHouseholds = await Household.find({householdIncome : { $lt : YOLO_GST_MAX_HOUSEHOLD_INCOME}}).lean();
+
+    for (let household of yoloGstHouseholds) {
+        const familyMembers = await FamilyMember.find({
+            householdId: household._id
+        }).lean();
+
+        if (familyMembers) {
+            household.familyMembers = familyMembers;
+        } else {
+            household.familyMembers = [];
+        }
+    }
+
+    response.status(STATUS_OK).json({
+        data: yoloGstHouseholds
+    });
+}

@@ -19,4 +19,7 @@ router.route('/familyMember')
         .get(asyncHandler(grantController.getAllFamilyMembers))
         .post(asyncHandler(grantController.addFamilyMember));
 
+router.route('/yoloGstGrant')
+        .get(asyncHandler(grantController.getYoloGstGrantHouseholds))
+
 module.exports = router;
