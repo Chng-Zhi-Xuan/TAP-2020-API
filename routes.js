@@ -22,4 +22,7 @@ router.route('/familyMember')
 router.route('/yoloGstGrant')
         .get(asyncHandler(grantController.getYoloGstGrantHouseholds))
 
+router.route('/babySunshineGrant')
+        .get(asyncHandler(grantController.getBabySunshineGrantHouseholds))
+
 module.exports = router;

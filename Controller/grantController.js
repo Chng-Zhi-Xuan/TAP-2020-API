@@ -16,7 +16,7 @@ const OCCUPATION_TYPES = ['Unemployed', 'Student', 'Employed'];
 
 exports.addHousehold = async function (request, response, next) {
 
-    let household = new Household();
+    const household = new Household();
 
     household.housingType = request.body.housingType ? request.body.housingType : EMPTY_STRING;
     household.householdFamily = [];
@@ -38,9 +38,9 @@ exports.addHousehold = async function (request, response, next) {
 
 exports.getAllHouseholds = async function (request, response, next) {
 
-    let allHousehold = await Household.find().lean();
+    const allHousehold = await Household.find().lean();
 
-    for (let household of allHousehold) {
+    for (const household of allHousehold) {
         const familyMembers = await FamilyMember.find({
             householdId: household._id
         }).lean();
@@ -59,7 +59,7 @@ exports.getAllHouseholds = async function (request, response, next) {
 
 exports.getHousehold = async function (request, response, next) {
 
-    let household = await Household.findById(request.params.household_id).lean();
+    const household = await Household.findById(request.params.household_id).lean();
 
     if (household) {
         const familyMembers = await FamilyMember.find({
@@ -81,14 +81,14 @@ exports.getHousehold = async function (request, response, next) {
 exports.addFamilyMember = async function (request, response, next) {
 
     const householdId = request.body.householdId ? request.body.householdId : EMPTY_STRING;
-    let household = await Household.findById(householdId);
+    const household = await Household.findById(householdId);
 
     if (!household) {
         response.status(STATUS_NOT_ACCEPTABLE).send('Household id must be existing');
         return next();
     }
 
-    let familyMember = new FamilyMember();
+    const familyMember = new FamilyMember();
 
     familyMember.householdId = householdId;
     familyMember.name = request.body.name ? request.body.name : EMPTY_STRING;
@@ -147,9 +147,9 @@ exports.getAllFamilyMembers = async function (request, response, next) {
 
 exports.getYoloGstGrantHouseholds = async function (request, response, next) {
 
-    let yoloGstHouseholds = await Household.find({householdIncome : { $lt : YOLO_GST_MAX_HOUSEHOLD_INCOME}}).lean();
+    const yoloGstHouseholds = await Household.find({householdIncome : { $lt : YOLO_GST_MAX_HOUSEHOLD_INCOME}}).lean();
 
-    for (let household of yoloGstHouseholds) {
+    for (const household of yoloGstHouseholds) {
         const familyMembers = await FamilyMember.find({
             householdId: household._id
         }).lean();
@@ -163,5 +163,33 @@ exports.getYoloGstGrantHouseholds = async function (request, response, next) {
 
     response.status(STATUS_OK).json({
         data: yoloGstHouseholds
+    });
+}
+
+exports.getBabySunshineGrantHouseholds = async function (request, response, next) {
+    
+    const householdArray = [];
+    const fiveYearOldBirthdate = new Date();
+    fiveYearOldBirthdate.setYear(fiveYearOldBirthdate.getFullYear() - 5);
+
+    const childrenGroupByHousehold = await FamilyMember.aggregate([
+        {$match: {dateOfBirth : {$gte : fiveYearOldBirthdate}}},
+        {$group: {
+            _id : "$householdId",
+            childrenArray: {$push: "$$ROOT"}
+        }}
+    ]);
+
+    for (const children of childrenGroupByHousehold) {
+
+        const household = await Household.findById(children._id).lean();
+        if (household) {
+            household.familyMembers = children.childrenArray;
+            householdArray.push(household);
+        }
+    }
+
+    response.status(STATUS_OK).json({
+        data: householdArray
     });
 }
