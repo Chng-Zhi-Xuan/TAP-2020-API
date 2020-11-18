@@ -1,6 +1,9 @@
 const asyncHandler = require('express-async-handler');
-const grantController = require('./Controller/grantController');
 const router = require('express').Router();
+
+const grantController = require('./Controllers/grantController');
+const householdController = require('./Controllers/householdController');
+const familyMemberController = require('./Controllers/familyMemberController');
 
 router.get('/', function(request, response) {
     response.json({
@@ -9,26 +12,26 @@ router.get('/', function(request, response) {
 });
 
 router.route('/household')
-        .get(asyncHandler(grantController.getAllHouseholds))
-        .post(asyncHandler(grantController.addHousehold));
+        .get(asyncHandler(householdController.getAllHouseholds))
+        .post(asyncHandler(householdController.addHousehold));
 
 router.route('/household/:household_id')
-        .get(asyncHandler(grantController.getHousehold));
+        .get(asyncHandler(householdController.getHousehold));
 
 router.route('/familyMember')
-        .get(asyncHandler(grantController.getAllFamilyMembers))
-        .post(asyncHandler(grantController.addFamilyMember));
+        .get(asyncHandler(familyMemberController.getAllFamilyMembers))
+        .post(asyncHandler(familyMemberController.addFamilyMember));
 
 router.route('/studentEncouragementBonus')
-        .get(asyncHandler(grantController.getStudentEncouragementBonusRecipients))
+        .get(asyncHandler(grantController.getStudentEncouragementBonusRecipients));
 
 router.route('/elderBonus')
-        .get(asyncHandler(grantController.getElderBonusRecipients))
+        .get(asyncHandler(grantController.getElderBonusRecipients));
 
 router.route('/babySunshineGrant')
-        .get(asyncHandler(grantController.getBabySunshineGrantRecipients))
+        .get(asyncHandler(grantController.getBabySunshineGrantRecipients));
 
 router.route('/yoloGstGrant')
-        .get(asyncHandler(grantController.getYoloGstGrantRecipients))
+        .get(asyncHandler(grantController.getYoloGstGrantRecipients));
 
 module.exports = router;
