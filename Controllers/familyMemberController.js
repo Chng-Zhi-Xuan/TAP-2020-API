@@ -43,6 +43,11 @@ async function verifyMaritalStatus (familyMember, response) {
             return false;
         }
 
+        if (spouse.gender === familyMember.gender) {
+            response.status(constants.STATUS_NOT_ACCEPTABLE).send('Spouse cannot be of the same gender');
+            return false;
+        }
+
         if (spouse.householdId !== familyMember.householdId) {
             response.status(constants.STATUS_NOT_ACCEPTABLE).send('Spouse must be in the same household');
             return false;
@@ -54,7 +59,7 @@ async function verifyMaritalStatus (familyMember, response) {
         sixteenYearOldBirthdate.setYear(sixteenYearOldBirthdate.getFullYear() - 16);
 
         if (familyMemberDob > sixteenYearOldBirthdate || spouseDob > sixteenYearOldBirthdate) {
-            response.status(constants.STATUS_NOT_ACCEPTABLE).send('Legal age for marriage is 16 in Singapore');
+            response.status(constants.STATUS_NOT_ACCEPTABLE).send('Legal age for marriage is 18');
             return false;
         }
     }
@@ -88,7 +93,7 @@ exports.addFamilyMember = async function (request, response, next) {
 
     if (!verifyGender(familyMember, response)
         || !await verifyMaritalStatus(familyMember, response)) {
-        
+
         return next();
     
     }  else if (!constants.OCCUPATION_TYPES.includes(familyMember.occupationType)) {
@@ -100,6 +105,15 @@ exports.addFamilyMember = async function (request, response, next) {
     } else {
 
         await familyMember.save();
+
+        await FamilyMember.findOneAndUpdate({
+            _id : familyMember.spouse
+        },
+        {
+            maritalStatus : constants.MARRIAGE_STATUSES[1],
+            spouse: familyMember._id
+        });
+
         await household.save();
 
         response.json({

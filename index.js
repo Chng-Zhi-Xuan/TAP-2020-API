@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 app.use('/api', apiRoutes)
 
 const grantDBPath = 'mongodb://127.0.0.1:27017/grantDB';
-const options = {useNewUrlParser: true, useUnifiedTopology: true}
+const options = {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false}
 const mongo = mongoose.connect(grantDBPath, options);
 
 mongo.then(() => {

@@ -27,6 +27,9 @@ router.route('/familyMember')
 router.route('/studentEncouragementBonus')
         .get(asyncHandler(grantController.getStudentEncouragementBonusRecipients));
 
+router.route('/familyTogethernessScheme')
+        .get(asyncHandler(grantController.getFamilyTogethernessSchemeRecipients))
+
 router.route('/elderBonus')
         .get(asyncHandler(grantController.getElderBonusRecipients));
 
