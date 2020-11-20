@@ -55,10 +55,10 @@ async function verifyMaritalStatus (familyMember, response) {
 
         const familyMemberDob = Date.parse(familyMember.dateOfBirth);
         const spouseDob = Date.parse(familyMember.dateOfBirth);
-        const sixteenYearOldBirthdate = new Date();
-        sixteenYearOldBirthdate.setYear(sixteenYearOldBirthdate.getFullYear() - 16);
+        const eighteenYearOldBirthdate = new Date();
+        eighteenYearOldBirthdate.setYear(eighteenYearOldBirthdate.getFullYear() - 18);
 
-        if (familyMemberDob > sixteenYearOldBirthdate || spouseDob > sixteenYearOldBirthdate) {
+        if (familyMemberDob > eighteenYearOldBirthdate || spouseDob > eighteenYearOldBirthdate) {
             response.status(constants.STATUS_NOT_ACCEPTABLE).send('Legal age for marriage is 18');
             return false;
         }
@@ -106,13 +106,15 @@ exports.addFamilyMember = async function (request, response, next) {
 
         await familyMember.save();
 
-        await FamilyMember.findOneAndUpdate({
-            _id : familyMember.spouse
-        },
-        {
-            maritalStatus : constants.MARRIAGE_STATUSES[1],
-            spouse: familyMember._id
-        });
+        if (familyMember.maritalStatus === constants.MARRIAGE_STATUSES[1]) {
+            await FamilyMember.findOneAndUpdate({
+                _id : familyMember.spouse
+            },
+            {
+                maritalStatus : constants.MARRIAGE_STATUSES[1],
+                spouse: familyMember._id
+            });
+        }
 
         await household.save();
 
@@ -121,9 +123,6 @@ exports.addFamilyMember = async function (request, response, next) {
             data: familyMember
         });
     }
-
-    // TODO: Spouse pair validation
-    // TODO: DOB Validation
 };
 
 exports.getAllFamilyMembers = async function (request, response, next) {
