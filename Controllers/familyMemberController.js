@@ -2,6 +2,66 @@ const Household = require('../Models/householdModel');
 const FamilyMember = require('../Models/familyMemberModel');
 const constants = require('../Utils/constants');
 
+function verifyGender (familyMember, response) {
+
+    if (!constants.GENDERS.includes(familyMember.gender)) {
+        response.status(constants.STATUS_NOT_ACCEPTABLE).send('Gender must be Male or Female');
+        return false;
+    }
+
+    return true;
+}
+
+async function verifyMaritalStatus (familyMember, response) {
+
+    if (!constants.MARRIAGE_STATUSES.includes(familyMember.maritalStatus)) {
+        response.status(constants.STATUS_NOT_ACCEPTABLE).send('Marital Status must be Single or Married');
+        return false;
+    }
+    
+    if (familyMember.maritalStatus === constants.MARRIAGE_STATUSES[0] && familyMember.spouse) {
+        response.status(constants.STATUS_NOT_ACCEPTABLE).send('Single must not have spouse');
+        return false;
+    }
+    
+    if (familyMember.maritalStatus === constants.MARRIAGE_STATUSES[1]) {
+
+        if (!familyMember.spouse) {
+            response.status(constants.STATUS_NOT_ACCEPTABLE).send('Married must have spouse');
+            return false;
+        }
+
+        const spouse = await FamilyMember.findById(familyMember.spouse);
+
+        if (!spouse) {
+            response.status(constants.STATUS_NOT_ACCEPTABLE).send('Spouse must be existing');
+            return false;
+        }
+
+        if (spouse.maritalStatus === constants.MARRIAGE_STATUSES[1]) {
+            response.status(constants.STATUS_NOT_ACCEPTABLE).send('Spouse is already married to someone else');
+            return false;
+        }
+
+        if (spouse.householdId !== familyMember.householdId) {
+            response.status(constants.STATUS_NOT_ACCEPTABLE).send('Spouse must be in the same household');
+            return false;
+        }
+
+        const familyMemberDob = Date.parse(familyMember.dateOfBirth);
+        const spouseDob = Date.parse(familyMember.dateOfBirth);
+        const sixteenYearOldBirthdate = new Date();
+        sixteenYearOldBirthdate.setYear(sixteenYearOldBirthdate.getFullYear() - 16);
+
+        if (familyMemberDob > sixteenYearOldBirthdate || spouseDob > sixteenYearOldBirthdate) {
+            response.status(constants.STATUS_NOT_ACCEPTABLE).send('Legal age for marriage is 16 in Singapore');
+            return false;
+        }
+    }
+
+    return true;
+}
+
 exports.addFamilyMember = async function (request, response, next) {
 
     const householdId = request.body.householdId ? request.body.householdId : constants.EMPTY_STRING;
@@ -26,21 +86,12 @@ exports.addFamilyMember = async function (request, response, next) {
     const newHouseholdIncome = (parseFloat(household.householdIncome) + parseFloat(familyMember.annualIncome)).toFixed(2);
     household.householdIncome = newHouseholdIncome;
 
-    if (!constants.GENDERS.includes(familyMember.gender)) {
-        response.status(constants.STATUS_NOT_ACCEPTABLE).send('Gender must be Male or Female');
+    if (!verifyGender(familyMember, response)
+        || !await verifyMaritalStatus(familyMember, response)) {
+        
+        return next();
     
-    } else if (!constants.MARRIAGE_STATUSES.includes(familyMember.maritalStatus)) {
-        response.status(constants.STATUS_NOT_ACCEPTABLE).send('Marital Status must be Single, Married or Widowed');
-    
-    } else if (familyMember.maritalStatus === constants.MARRIAGE_STATUSES[0]
-        && familyMember.spouse) {
-        response.status(constants.STATUS_NOT_ACCEPTABLE).send('Single must not have spouse');
-    
-    } else if (familyMember.maritalStatus === constants.MARRIAGE_STATUSES[1]
-        && !familyMember.spouse) {
-        response.status(constants.STATUS_NOT_ACCEPTABLE).send('Married must have spouse');
-    
-    } else if (!constants.OCCUPATION_TYPES.includes(familyMember.occupationType)) {
+    }  else if (!constants.OCCUPATION_TYPES.includes(familyMember.occupationType)) {
         response.status(constants.STATUS_NOT_ACCEPTABLE).send('Occupation must be Unemployed, Student or Employed');
     
     } else if (isNaN(familyMember.annualIncome) || familyMember.annualIncome < 0) {

@@ -1,5 +1,6 @@
 module.exports = Object.freeze({
     EMPTY_STRING : '',
+    VALID_FIELD : 'Valid',
  
     YOLO_GST_MAX_HOUSEHOLD_INCOME : 100000,
     STUDENT_ENCOURAGEMENT_MAX_HOUSEHOLD_INCOME : 150000,
