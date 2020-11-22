@@ -5,15 +5,16 @@ This is my submission for the take-home technical assessment for GovTech TAP.
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/en/download/)
-- [MongoDB](https://www.mongodb.com/try/download/)
+- [MongoDB](https://docs.mongodb.com/manual/installation/)
 - [Postman](https://www.postman.com/downloads/) (For testing the API)
 
 ## Running the application
 
 - Clone the repository, install dependencies.
 ```
-cd [cloned repository folder]
-npm init
+git clone https://github.com/Chng-Zhi-Xuan/TAP-2020-API
+cd TAP-2020-API
+npm install
 ```
 - [Start MongoDB](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/#run-mongodb-community-edition-from-the-command-interpreter).
 - [Optional]
