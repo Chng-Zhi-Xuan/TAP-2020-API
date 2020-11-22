@@ -34,10 +34,6 @@ const familyMemberSchema = mongoose.Schema({
         required: true,
         min: '1900-01-01',
         max: Date.now
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
     }
 });
 

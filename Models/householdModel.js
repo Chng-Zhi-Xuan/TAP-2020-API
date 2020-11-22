@@ -8,10 +8,6 @@ const householdSchema = mongoose.Schema({
     householdIncome: {
         type: mongoose.SchemaTypes.Decimal128,
         required: true
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
     }
 });
 
