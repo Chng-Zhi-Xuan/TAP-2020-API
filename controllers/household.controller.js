@@ -1,5 +1,5 @@
-const Household = require('../models/householdModel');
-const FamilyMember = require('../models/familyMemberModel');
+const Household = require('../models/household.model');
+const FamilyMember = require('../models/family-member.model');
 const constants = require('../utils/constants');
 
 exports.addHousehold = async function (request, response, next) {

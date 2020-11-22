@@ -1,10 +1,10 @@
 const asyncHandler = require('express-async-handler');
-const constants = require('./Utils/constants');
+const constants = require('./utils/constants');
 const router = require('express').Router();
 
-const familyMemberController = require('./Controllers/familyMemberController');
-const grantController = require('./Controllers/grantController');
-const householdController = require('./Controllers/householdController');
+const familyMemberController = require('./controllers/family-member.controller');
+const grantController = require('./controllers/grant.controller');
+const householdController = require('./controllers/household.controller');
 
 router.get('/', function(request, response) {
     response.status(constants.STATUS_OK).send('Homepage of Grant Disbursement API');
