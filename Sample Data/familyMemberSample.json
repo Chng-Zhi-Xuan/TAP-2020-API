@@ -1,0 +1,105 @@
+[{
+  "_id": {
+    "$oid": "5fba57b909cbc21c4cdc899b"
+  },
+  "householdId": "5fba578e09cbc21c4cdc899a",
+  "name": "Ah Gong",
+  "gender": "Male",
+  "maritalStatus": "Single",
+  "spouse": "",
+  "occupationType": "Unemployed",
+  "annualIncome": {
+    "$numberDecimal": "250000.00"
+  },
+  "dateOfBirth": {
+    "$date": {
+      "$numberLong": "-946771200000"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5fba57e309cbc21c4cdc899c"
+  },
+  "householdId": "5fba573609cbc21c4cdc8998",
+  "name": "Atas Lawyer",
+  "gender": "Male",
+  "maritalStatus": "Single",
+  "spouse": "",
+  "occupationType": "Employed",
+  "annualIncome": {
+    "$numberDecimal": "140000.00"
+  },
+  "dateOfBirth": {
+    "$date": "1980-02-02T00:00:00Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5fba580109cbc21c4cdc899d"
+  },
+  "householdId": "5fba573609cbc21c4cdc8998",
+  "name": "Adopted Child",
+  "gender": "Male",
+  "maritalStatus": "Single",
+  "spouse": "",
+  "occupationType": "Student",
+  "annualIncome": {
+    "$numberDecimal": "0.00"
+  },
+  "dateOfBirth": {
+    "$date": "2010-03-03T00:00:00Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5fba582209cbc21c4cdc899e"
+  },
+  "householdId": "5fba578a09cbc21c4cdc8999",
+  "name": "Uncle",
+  "gender": "Male",
+  "maritalStatus": "Married",
+  "spouse": "5fba584e09cbc21c4cdc899f",
+  "occupationType": "Employed",
+  "annualIncome": {
+    "$numberDecimal": "40000.00"
+  },
+  "dateOfBirth": {
+    "$date": "1985-04-04T00:00:00Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5fba584e09cbc21c4cdc899f"
+  },
+  "householdId": "5fba578a09cbc21c4cdc8999",
+  "name": "Auntie",
+  "gender": "Female",
+  "maritalStatus": "Married",
+  "spouse": "5fba582209cbc21c4cdc899e",
+  "occupationType": "Employed",
+  "annualIncome": {
+    "$numberDecimal": "40000.00"
+  },
+  "dateOfBirth": {
+    "$date": "1985-05-05T00:00:00Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5fba587009cbc21c4cdc89a1"
+  },
+  "householdId": "5fba578a09cbc21c4cdc8999",
+  "name": "Baby",
+  "gender": "Female",
+  "maritalStatus": "Single",
+  "spouse": "",
+  "occupationType": "Unemployed",
+  "annualIncome": {
+    "$numberDecimal": "0.00"
+  },
+  "dateOfBirth": {
+    "$date": "2019-06-06T00:00:00Z"
+  },
+  "__v": 0
+}]

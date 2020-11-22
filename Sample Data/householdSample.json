@@ -1,0 +1,28 @@
+[{
+  "_id": {
+    "$oid": "5fba573609cbc21c4cdc8998"
+  },
+  "housingType": "Condominium",
+  "householdIncome": {
+    "$numberDecimal": "140000.00"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5fba578a09cbc21c4cdc8999"
+  },
+  "housingType": "HDB",
+  "householdIncome": {
+    "$numberDecimal": "80000.00"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5fba578e09cbc21c4cdc899a"
+  },
+  "housingType": "Landed",
+  "householdIncome": {
+    "$numberDecimal": "250000.00"
+  },
+  "__v": 0
+}]
