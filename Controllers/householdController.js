@@ -26,9 +26,9 @@ exports.addHousehold = async function (request, response, next) {
 
 exports.getAllHouseholds = async function (request, response, next) {
 
-    const allHousehold = await Household.find().lean();
+    const allHouseholds = await Household.find().lean();
 
-    for (const household of allHousehold) {
+    for (const household of allHouseholds) {
         const familyMembers = await FamilyMember.find({
             householdId: household._id
         }).lean();
@@ -41,7 +41,7 @@ exports.getAllHouseholds = async function (request, response, next) {
     }
 
     response.status(constants.STATUS_OK).json({
-        data: allHousehold
+        data: allHouseholds
     });
 };
 
