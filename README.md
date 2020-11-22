@@ -19,7 +19,7 @@ npm init
 - [Optional]
   - [Create a new database](https://www.mongodb.com/basics/create-database) named `grantDB`.
   - Create 2 collections within the database,  `householdCollection` and `familyMemberCollection`.
-  - Import sample data using [command prompt](https://docs.mongodb.com/guides/server/import/) or [MongoDB Compass](https://docs.mongodb.com/compass/master/import-export).
+  - Import sample data using [console](https://docs.mongodb.com/guides/server/import/) or [MongoDB Compass](https://docs.mongodb.com/compass/master/import-export).
 - Run the server.
 ```
 node index
@@ -73,11 +73,11 @@ Adds a new family member given the following key value pair in `x-www-form-urlen
 
 | Key            | Value                           |
 |:---------------|:--------------------------------|
-| householdId    | MongoDB Id                      |
+| householdId    | Existing Household Id           |
 | name           | Any value                       |
 | gender         | Male / Female                   |
 | maritalStatus  | Single / Married                |
-| spouse         | MongoDB Id                      |
+| spouse         | Existing Family Member Id       |
 | occupationType | Unemployed / Student / Employed |
 | annualIncome   | Non-negative numeric value      |
 | dateOfBirth    | Past date, yyyy-mm-dd format    |
