@@ -67,6 +67,37 @@ async function verifyMaritalStatus (familyMember, response) {
     return true;
 }
 
+function verifyOccupationType (familyMember, response) {
+
+    if (!constants.OCCUPATION_TYPES.includes(familyMember.occupationType)) {
+        response.status(constants.STATUS_NOT_ACCEPTABLE).send('Occupation must be Unemployed, Student or Employed');
+        return false;
+    }
+
+    return true;
+}
+
+function verifyAnnualIncome (familyMember, response) {
+    if (isNaN(familyMember.annualIncome) || familyMember.annualIncome < 0) {
+        response.status(constants.STATUS_NOT_ACCEPTABLE).send('Annual income must be a non-negative number');
+        return false;
+    }
+
+    return true;
+}
+
+function verifyDateOfBirth (familyMember, response) {
+
+    const checkDate = Date.parse(familyMember.dateOfBirth);
+
+    if (isNaN(checkDate) || checkDate > Date.now()) {
+        response.status(constants.STATUS_NOT_ACCEPTABLE).send('Date must be in the past and in yyyy-mm-dd format');
+        return false;
+    }
+
+    return true;
+}
+
 exports.addFamilyMember = async function (request, response, next) {
 
     const householdId = request.body.householdId ? request.body.householdId : constants.EMPTY_STRING;
@@ -92,35 +123,31 @@ exports.addFamilyMember = async function (request, response, next) {
     household.householdIncome = newHouseholdIncome;
 
     if (!verifyGender(familyMember, response)
-        || !await verifyMaritalStatus(familyMember, response)) {
+        || !await verifyMaritalStatus(familyMember, response)
+        || !verifyOccupationType(familyMember, response)
+        || !verifyAnnualIncome(familyMember, response)
+        || !verifyDateOfBirth(familyMember, response)) {
 
         return next();
-    
-    }  else if (!constants.OCCUPATION_TYPES.includes(familyMember.occupationType)) {
-        response.status(constants.STATUS_NOT_ACCEPTABLE).send('Occupation must be Unemployed, Student or Employed');
-    
-    } else if (isNaN(familyMember.annualIncome) || familyMember.annualIncome < 0) {
-        response.status(constants.STATUS_NOT_ACCEPTABLE).send('Annual income must be a non-negative number');
+    } 
 
-    } else {
+    await familyMember.save();
 
-        await familyMember.save();
-
-        if (familyMember.maritalStatus === constants.MARRIAGE_STATUSES[1]) {
-            await FamilyMember.findByIdAndUpdate(familyMember.spouse,
-            {
-                maritalStatus : constants.MARRIAGE_STATUSES[1],
-                spouse: familyMember._id
-            });
-        }
-
-        await household.save();
-
-        response.json({
-            message: 'New family member has been added',
-            data: familyMember
+    if (familyMember.maritalStatus === constants.MARRIAGE_STATUSES[1]) {
+        await FamilyMember.findByIdAndUpdate(familyMember.spouse,
+        {
+            maritalStatus : constants.MARRIAGE_STATUSES[1],
+            spouse: familyMember._id
         });
     }
+
+    await household.save();
+
+    response.json({
+        message: 'New family member has been added',
+        data: familyMember
+    });
+    
 };
 
 exports.getAllFamilyMembers = async function (request, response, next) {
