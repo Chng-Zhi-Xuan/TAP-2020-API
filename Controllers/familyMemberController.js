@@ -107,9 +107,7 @@ exports.addFamilyMember = async function (request, response, next) {
         await familyMember.save();
 
         if (familyMember.maritalStatus === constants.MARRIAGE_STATUSES[1]) {
-            await FamilyMember.findOneAndUpdate({
-                _id : familyMember.spouse
-            },
+            await FamilyMember.findByIdAndUpdate(familyMember.spouse,
             {
                 maritalStatus : constants.MARRIAGE_STATUSES[1],
                 spouse: familyMember._id
@@ -119,7 +117,7 @@ exports.addFamilyMember = async function (request, response, next) {
         await household.save();
 
         response.json({
-            message: "New family member has been added",
+            message: 'New family member has been added',
             data: familyMember
         });
     }
@@ -131,3 +129,33 @@ exports.getAllFamilyMembers = async function (request, response, next) {
         data: allFamilyMembers       
     });
 };
+
+exports.removeFamilyMember = async function(request, response, next) {
+
+    const familyMemberToRemove = await FamilyMember.findById(request.params.family_member_id);
+
+    if (!familyMemberToRemove) {
+        response.status(constants.STATUS_NOT_ACCEPTABLE).send('Family member not found');
+        return next();
+    }
+
+    const familyMemberId = familyMemberToRemove._id;
+
+    // Update household income
+    const household = await Household.findById(familyMemberToRemove.householdId);
+    const newHouseholdIncome = (parseFloat(household.householdIncome) - parseFloat(familyMemberToRemove.annualIncome)).toFixed(2);
+    household.householdIncome = newHouseholdIncome;
+    await household.save();
+    
+    // Update spouse to be single
+    if (familyMemberToRemove.spouse) {
+        await FamilyMember.findByIdAndUpdate(familyMemberToRemove.spouse, 
+        {
+            maritalStatus : constants.MARRIAGE_STATUSES[0],
+            spouse: constants.EMPTY_STRING
+        });
+    }
+
+    await familyMemberToRemove.remove();
+    response.status(constants.STATUS_OK).send('Removed family member with id: ' + familyMemberId);
+}

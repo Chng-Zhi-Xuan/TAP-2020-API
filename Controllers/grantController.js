@@ -15,8 +15,8 @@ exports.getStudentEncouragementBonusRecipients = async function (request, respon
             occupationType : constants.OCCUPATION_TYPES[1]
         }},
         {$group: {
-            _id : "$householdId",
-            studentsArray: {$push: "$$ROOT"}
+            _id : '$householdId',
+            studentsArray: {$push: '$$ROOT'}
         }}
     ]);
 
@@ -48,7 +48,7 @@ exports.getFamilyTogethernessSchemeRecipients = async function (request, respons
             dateOfBirth : {$lt : eighteenYearOldBirthdate},
         }},
         {$group: {
-            _id : "$householdId",
+            _id : '$householdId',
         }}
     ]);
 
@@ -57,7 +57,7 @@ exports.getFamilyTogethernessSchemeRecipients = async function (request, respons
             maritalStatus : constants.MARRIAGE_STATUSES[1],
         }},
         {$group: {
-            _id : "$householdId",
+            _id : '$householdId',
         }}
     ]);
 
@@ -103,8 +103,8 @@ exports.getElderBonusRecipients = async function (request, response, next) {
             dateOfBirth : {$lte : fiftyYearOldBirthdate}
         }},
         {$group: {
-            _id : "$householdId",
-            elderlyArray: {$push: "$$ROOT"}
+            _id : '$householdId',
+            elderlyArray: {$push: '$$ROOT'}
         }}
     ]);
 
@@ -132,8 +132,8 @@ exports.getBabySunshineGrantRecipients = async function (request, response, next
         {$match: {
             dateOfBirth : {$gte : fiveYearOldBirthdate}}},
         {$group: {
-            _id : "$householdId",
-            childrenArray: {$push: "$$ROOT"}
+            _id : '$householdId',
+            childrenArray: {$push: '$$ROOT'}
         }}
     ]);
 

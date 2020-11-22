@@ -23,6 +23,9 @@ router.route('/familyMember')
         .get(asyncHandler(familyMemberController.getAllFamilyMembers))
         .post(asyncHandler(familyMemberController.addFamilyMember));
 
+router.route('/familyMember/:family_member_id')
+        .delete(asyncHandler(familyMemberController.removeFamilyMember));
+
 // Grant APIs
 router.route('/studentEncouragementBonus')
         .get(asyncHandler(grantController.getStudentEncouragementBonusRecipients));

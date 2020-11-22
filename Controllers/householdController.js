@@ -19,7 +19,7 @@ exports.addHousehold = async function (request, response, next) {
     await household.save();
 
     response.status(constants.STATUS_CREATED).json({
-        message: "New household has been added.",
+        message: 'New household has been added.',
         data: household
     });
 };
