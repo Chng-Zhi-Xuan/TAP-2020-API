@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 
 exports.getStudentEncouragementBonusRecipients = async function (request, response, next) {
     
-    const householdArray = [];
+    const recipientHouseholds = [];
     const sixteenYearOldBirthdate = new Date();
     sixteenYearOldBirthdate.setYear(sixteenYearOldBirthdate.getFullYear() - 16);
 
@@ -16,25 +16,25 @@ exports.getStudentEncouragementBonusRecipients = async function (request, respon
         }},
         {$group: {
             _id : '$householdId',
-            studentsArray: {$push: '$$ROOT'}
+            students: {$push: '$$ROOT'}
         }}
     ]);
 
-    for (const students of studentsGroupByHousehold) {
+    for (const studentsHousehold of studentsGroupByHousehold) {
 
         const household = await Household.findOne(
-            {   _id: students._id,
+            {   _id: studentsHousehold._id,
                 householdIncome : { $lt : constants.STUDENT_ENCOURAGEMENT_MAX_HOUSEHOLD_INCOME}
             }).lean();
 
         if (household) {
-            household.familyMembers = students.studentsArray;
-            householdArray.push(household);
+            household.familyMembers = studentsHousehold.students;
+            recipientHouseholds.push(household);
         }
     }
 
     response.status(constants.STATUS_OK).json({
-        data: householdArray
+        data: recipientHouseholds
     });
 };
 
@@ -61,12 +61,14 @@ exports.getFamilyTogethernessSchemeRecipients = async function (request, respons
         }}
     ]);
 
+    // Households that exist in both results
     const intersectionHouseholdIdObjects = childrenGroupByHouseholdIds.filter(children => {
         return marriedAdultsGroupByHouseholdIds.some(marriedAdults => {
             return children._id === marriedAdults._id;
         });
     })
     
+    // Convert string id to ObjectId
     const householdIdArray = intersectionHouseholdIdObjects.map(householdObject => {
         return mongoose.Types.ObjectId(householdObject._id);
     });
@@ -94,7 +96,7 @@ exports.getFamilyTogethernessSchemeRecipients = async function (request, respons
 
 exports.getElderBonusRecipients = async function (request, response, next) {
     
-    const householdArray = [];
+    const recipientHouseholds = [];
     const fiftyYearOldBirthdate = new Date();
     fiftyYearOldBirthdate.setYear(fiftyYearOldBirthdate.getFullYear() - 50);
 
@@ -104,27 +106,27 @@ exports.getElderBonusRecipients = async function (request, response, next) {
         }},
         {$group: {
             _id : '$householdId',
-            elderlyArray: {$push: '$$ROOT'}
+            elderly: {$push: '$$ROOT'}
         }}
     ]);
 
-    for (const elderly of elderlyGroupByHousehold) {
+    for (const elderlyHousehold of elderlyGroupByHousehold) {
 
-        const household = await Household.findById(elderly._id).lean();
+        const household = await Household.findById(elderlyHousehold._id).lean();
         if (household) {
-            household.familyMembers = elderly.elderlyArray;
-            householdArray.push(household);
+            household.familyMembers = elderlyHousehold.elderly;
+            recipientHouseholds.push(household);
         }
     }
 
     response.status(constants.STATUS_OK).json({
-        data: householdArray
+        data: recipientHouseholds
     });
 };
 
 exports.getBabySunshineGrantRecipients = async function (request, response, next) {
     
-    const householdArray = [];
+    const recipientHouseholds = [];
     const fiveYearOldBirthdate = new Date();
     fiveYearOldBirthdate.setYear(fiveYearOldBirthdate.getFullYear() - 5);
 
@@ -133,21 +135,21 @@ exports.getBabySunshineGrantRecipients = async function (request, response, next
             dateOfBirth : {$gte : fiveYearOldBirthdate}}},
         {$group: {
             _id : '$householdId',
-            childrenArray: {$push: '$$ROOT'}
+            children: {$push: '$$ROOT'}
         }}
     ]);
 
-    for (const children of childrenGroupByHousehold) {
+    for (const childrenHousehold of childrenGroupByHousehold) {
 
-        const household = await Household.findById(children._id).lean();
+        const household = await Household.findById(childrenHousehold._id).lean();
         if (household) {
-            household.familyMembers = children.childrenArray;
-            householdArray.push(household);
+            household.familyMembers = childrenHousehold.children;
+            recipientHouseholds.push(household);
         }
     }
 
     response.status(constants.STATUS_OK).json({
-        data: householdArray
+        data: recipientHouseholds
     });
 };
 
