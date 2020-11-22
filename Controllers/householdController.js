@@ -65,3 +65,20 @@ exports.getHousehold = async function (request, response, next) {
         data: household
     });
 };
+
+exports.removeHousehold = async function (request, response, next) {
+    
+    const householdToRemove = await Household.findById(request.params.household_id);
+
+    if (!householdToRemove) {
+        response.status(constants.STATUS_NOT_ACCEPTABLE).send('Household not found');
+        return next();
+    }
+
+    await FamilyMember.deleteMany({
+        householdId : householdToRemove._id
+    })
+
+    await householdToRemove.remove();
+    response.status(constants.STATUS_OK).send('Removed household with id: ' + householdToRemove._id);
+}

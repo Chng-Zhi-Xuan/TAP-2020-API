@@ -16,7 +16,8 @@ router.route('/household')
         .post(asyncHandler(householdController.addHousehold));
 
 router.route('/household/:household_id')
-        .get(asyncHandler(householdController.getHousehold));
+        .get(asyncHandler(householdController.getHousehold))
+        .delete(asyncHandler(householdController.removeHousehold));
 
 // Family Member APIs
 router.route('/familyMember')
@@ -31,7 +32,7 @@ router.route('/studentEncouragementBonus')
         .get(asyncHandler(grantController.getStudentEncouragementBonusRecipients));
 
 router.route('/familyTogethernessScheme')
-        .get(asyncHandler(grantController.getFamilyTogethernessSchemeRecipients))
+        .get(asyncHandler(grantController.getFamilyTogethernessSchemeRecipients));
 
 router.route('/elderBonus')
         .get(asyncHandler(grantController.getElderBonusRecipients));
