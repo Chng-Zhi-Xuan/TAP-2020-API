@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler');
-const constants = require('./utility/constants');
+const constants = require('./utils/constants');
 const router = require('express').Router();
 
 const familyMemberController = require('./controllers/family-member.controller');
