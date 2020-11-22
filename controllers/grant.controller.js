@@ -1,6 +1,6 @@
 const Household = require('../models/household.model');
 const FamilyMember = require('../models/family-member.model');
-const constants = require('../utils/constants');
+const constants = require('../utility/constants');
 const mongoose = require('mongoose');
 
 exports.getStudentEncouragementBonusRecipients = async function (request, response, next) {

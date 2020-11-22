@@ -1,6 +1,6 @@
 const Household = require('../models/household.model');
 const FamilyMember = require('../models/family-member.model');
-const constants = require('../utils/constants');
+const constants = require('../utility/constants');
 
 function verifyGender (familyMember, response) {
 
