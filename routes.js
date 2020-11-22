@@ -25,6 +25,7 @@ router.route('/familyMember')
         .post(asyncHandler(familyMemberController.addFamilyMember));
 
 router.route('/familyMember/:family_member_id')
+        .get(asyncHandler(familyMemberController.getFamilyMember))
         .delete(asyncHandler(familyMemberController.removeFamilyMember));
 
 // Grant APIs

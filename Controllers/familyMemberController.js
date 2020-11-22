@@ -157,6 +157,13 @@ exports.getAllFamilyMembers = async function (request, response, next) {
     });
 };
 
+exports.getFamilyMember = async function (request, response, next) {
+    const familyMember = await FamilyMember.findById(request.params.family_member_id).lean();
+    response.status(constants.STATUS_OK).json({
+        data: familyMember
+    });
+}
+
 exports.removeFamilyMember = async function(request, response, next) {
 
     const familyMemberToRemove = await FamilyMember.findById(request.params.family_member_id);
